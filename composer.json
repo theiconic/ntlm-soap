@@ -1,0 +1,23 @@
+{
+    "name": "theiconic/ntlm-soap",
+    "type": "library",
+    "authors": [
+        {
+            "name": "THE ICONIC Engineering Team",
+            "email": "engineering@theiconic.com.au"
+        }
+    ],
+    "require": {
+        "php": "~7.1",
+        "ext-soap": "~7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "TheIconic\\NtlmSoap\\": "src/"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "optimize-autoloader": true
+    }
+}
