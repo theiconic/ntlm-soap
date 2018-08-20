@@ -64,6 +64,15 @@ class NtlmSoapTest extends TestCase
 
         $this->assertRequestOptionsIsEquals('headers', $expectedHeaders);
     }
+    
+    public function testShouldSendRequestBodyParams(): void
+    {
+        $this->soapClient->testRequest('foo');
+
+        $expectedBody = '<param0 xsi:type="xsd:string">foo</param0>';
+
+        $this->assertRequestOptionsContains('body', $expectedBody);
+    }
 
     private function assertRequestOptionsIsEquals(string $optionsKey, $expected): void
     {
@@ -73,6 +82,20 @@ class NtlmSoapTest extends TestCase
             Mockery::on(function (array $options) use ($optionsKey, $expected) {
 
                 $this->assertEquals($expected, $options[$optionsKey]);
+
+                return true;
+            }),
+        ]);
+    }
+
+    private function assertRequestOptionsContains(string $optionsKey, $expected): void
+    {
+        $this->clientMock->shouldHaveReceived('request', [
+            Mockery::any(),
+            Mockery::any(),
+            Mockery::on(function (array $options) use ($optionsKey, $expected) {
+
+                $this->assertContains($expected, $options[$optionsKey]);
 
                 return true;
             }),
