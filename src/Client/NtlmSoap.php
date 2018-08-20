@@ -35,7 +35,7 @@ class NtlmSoap extends SoapClient
         $headers = [
             'Connection' => 'Keep-Alive',
             'Content-type' => 'text/xml; charset=utf-8',
-            'SOAPAction' => sprintf('"%s"', $action),
+            'SOAPAction' => $action,
         ];
 
         try {
