@@ -74,6 +74,13 @@ class NtlmSoapTest extends TestCase
         $this->assertRequestOptionsContains('body', $expectedBody);
     }
 
+    public function testShouldSetHttpErrorsAsFalse(): void
+    {
+        $this->soapClient->testRequest('foo');
+
+        $this->assertRequestOptionsIsEquals('http_errors', false);
+    }
+
     private function assertRequestOptionsIsEquals(string $optionsKey, $expected): void
     {
         $this->clientMock->shouldHaveReceived('request', [
