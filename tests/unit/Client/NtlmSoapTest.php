@@ -20,6 +20,8 @@ class NtlmSoapTest extends TestCase
 
     private $password = 'testPassword';
 
+    private $testUri = 'http://test-uri';
+
     protected function setUp()
     {
         parent::setUp();
@@ -33,7 +35,7 @@ class NtlmSoapTest extends TestCase
             $this->username,
             $this->password,
             null,
-            ['location' => 'http://test-location', 'uri' => 'http://test-uri']
+            ['location' => 'http://test-location', 'uri' => $this->testUri]
         );
     }
 
@@ -48,6 +50,19 @@ class NtlmSoapTest extends TestCase
         ];
 
         $this->assertRequestOptionsIsEquals('auth', $expectedAuth);
+    }
+
+    public function testShouldSendHeadersOnRequest(): void
+    {
+        $this->soapClient->testRequest('foo');
+
+        $expectedHeaders = [
+            'Connection' => 'Keep-Alive',
+            'Content-type' => 'text/xml; charset=utf-8',
+            'SOAPAction' => $this->testUri . '#testRequest',
+        ];
+
+        $this->assertRequestOptionsIsEquals('headers', $expectedHeaders);
     }
 
     private function assertRequestOptionsIsEquals(string $optionsKey, $expected): void
