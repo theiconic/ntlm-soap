@@ -17,7 +17,7 @@ class NtlmSoap extends SoapClient
         ClientInterface $client,
         string $username,
         string $password,
-        string $wsdl,
+        string $wsdl = null,
         array $options = []
     ) {
         $this->client = $client;
@@ -49,6 +49,6 @@ class NtlmSoap extends SoapClient
             throw new SoapFault($exception->getCode(), $exception->getMessage());
         }
 
-            return (string) $response->getBody();
-        }
+        return (string)$response->getBody();
     }
+}
