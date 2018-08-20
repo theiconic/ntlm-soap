@@ -11,11 +11,14 @@ use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use SoapFault;
+use stdClass;
 use TheIconic\NtlmSoap\Client\NtlmSoap;
 
 class NtlmSoapTest extends TestCase
 {
     private const INTERNAL_ERROR = 500;
+
+    private const OK = 200;
 
     /** @var MockInterface */
     private $clientMock;
@@ -89,6 +92,18 @@ class NtlmSoapTest extends TestCase
         $this->assertRequestOptionsIsEquals('http_errors', false);
     }
 
+    public function testShouldReturnAResponseMessage(): void
+    {
+        $this->clientMock->allows([
+            'request' => new Response(self::OK, [], $this->getResponseEnvelopeMsg('<Item><Name>Foo</Name></Item>'))
+        ]);
+
+        $expectedResponse = new stdClass();
+        $expectedResponse->Name = 'Foo';
+
+        $this->assertEquals($expectedResponse, $this->soapClient->testRequest('foo'));
+    }
+
     public function testShouldReturnASoapFaultForInternalErrorResponse(): void
     {
         $errorMsg = 'Service was not found!';
@@ -157,5 +172,14 @@ class NtlmSoapTest extends TestCase
             '</s:Fault></s:Body></s:Envelope>';
 
         return sprintf($envelopePattern, $faultMsg);
+    }
+
+    private function getResponseEnvelopeMsg(string $responseResult): string
+    {
+        $responsePattern = '<Soap:Envelope xmlns:Soap="http://schemas.xmlsoap.org/soap/envelope/"><Soap:Body>'.
+            '<testRequest_Result>%s</testRequest_Result>'.
+            '</Soap:Body></Soap:Envelope>';
+
+        return sprintf($responsePattern, $responseResult);
     }
 }
