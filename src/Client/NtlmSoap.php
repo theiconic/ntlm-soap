@@ -38,16 +38,12 @@ class NtlmSoap extends SoapClient
             'SOAPAction' => $action,
         ];
 
-        try {
-            $response = $this->client->request('POST', $location, [
-                'headers' => $headers,
-                'auth' => [$this->username, $this->password, 'ntlm'],
-                'body' => $request,
-                'http_errors' => false,
-            ]);
-        } catch (RequestException $exception) {
-            throw new SoapFault($exception->getCode(), $exception->getMessage());
-        }
+        $response = $this->client->request('POST', $location, [
+            'headers' => $headers,
+            'auth' => [$this->username, $this->password, 'ntlm'],
+            'body' => $request,
+            'http_errors' => false,
+        ]);
 
         return (string)$response->getBody();
     }

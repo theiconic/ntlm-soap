@@ -2,15 +2,21 @@
 
 namespace Test\Unit\TheIconic\Client;
 
+use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Mockery;
 use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
+use SoapFault;
 use TheIconic\NtlmSoap\Client\NtlmSoap;
 
 class NtlmSoapTest extends TestCase
 {
+    private const INTERNAL_ERROR = 500;
+
     /** @var MockInterface */
     private $clientMock;
 
@@ -21,6 +27,8 @@ class NtlmSoapTest extends TestCase
     private $password = 'testPassword';
 
     private $testUri = 'http://test-uri';
+
+    private $testLocation = 'http://test-location';
 
     protected function setUp()
     {
@@ -35,7 +43,7 @@ class NtlmSoapTest extends TestCase
             $this->username,
             $this->password,
             null,
-            ['location' => 'http://test-location', 'uri' => $this->testUri]
+            ['location' => $this->testLocation, 'uri' => $this->testUri]
         );
     }
 
@@ -59,12 +67,12 @@ class NtlmSoapTest extends TestCase
         $expectedHeaders = [
             'Connection' => 'Keep-Alive',
             'Content-type' => 'text/xml; charset=utf-8',
-            'SOAPAction' => $this->testUri . '#testRequest',
+            'SOAPAction' => $this->testUri.'#testRequest',
         ];
 
         $this->assertRequestOptionsIsEquals('headers', $expectedHeaders);
     }
-    
+
     public function testShouldSendRequestBodyParams(): void
     {
         $this->soapClient->testRequest('foo');
@@ -79,6 +87,31 @@ class NtlmSoapTest extends TestCase
         $this->soapClient->testRequest('foo');
 
         $this->assertRequestOptionsIsEquals('http_errors', false);
+    }
+
+    public function testShouldReturnASoapFaultForInternalErrorResponse(): void
+    {
+        $errorMsg = 'Service was not found!';
+
+        $errorResponse = new Response(
+            self::INTERNAL_ERROR,
+            [],
+            $this->getFaultEnvelopeMsg($errorMsg)
+        );
+
+        $client = $this->getMockHttpClient([$errorResponse]);
+
+        $soapClient = new NtlmSoap(
+            $client,
+            $this->username,
+            $this->password,
+            null,
+            ['location' => $this->testLocation, 'uri' => $this->testUri]
+        );
+
+        $this->expectException(SoapFault::class);
+        $this->expectExceptionMessage($errorMsg);
+        $soapClient->testRequest('foo');
     }
 
     private function assertRequestOptionsIsEquals(string $optionsKey, $expected): void
@@ -107,5 +140,22 @@ class NtlmSoapTest extends TestCase
                 return true;
             }),
         ]);
+    }
+
+    private function getMockHttpClient(array $responses = []): ClientInterface
+    {
+        $mockHandler = new MockHandler($responses);
+        $handler = HandlerStack::create($mockHandler);
+
+        return new Client(['handler' => $handler]);
+    }
+
+    private function getFaultEnvelopeMsg(string $faultMsg): string
+    {
+        $envelopePattern = '<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><s:Fault>'.
+            '<faultstring xml:lang="en-US">%s</faultstring>'.
+            '</s:Fault></s:Body></s:Envelope>';
+
+        return sprintf($envelopePattern, $faultMsg);
     }
 }
