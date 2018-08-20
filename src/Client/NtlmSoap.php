@@ -3,7 +3,6 @@
 namespace TheIconic\NtlmSoap\Client;
 
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\RequestException;
 use SoapClient;
 use SoapFault;
 
