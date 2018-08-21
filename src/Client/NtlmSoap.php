@@ -3,7 +3,6 @@
 namespace TheIconic\NtlmSoap\Client;
 
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Exception\RequestException;
 use SoapClient;
 use SoapFault;
 
@@ -17,7 +16,7 @@ class NtlmSoap extends SoapClient
         ClientInterface $client,
         string $username,
         string $password,
-        string $wsdl,
+        string $wsdl = null,
         array $options = []
     ) {
         $this->client = $client;
@@ -35,20 +34,16 @@ class NtlmSoap extends SoapClient
         $headers = [
             'Connection' => 'Keep-Alive',
             'Content-type' => 'text/xml; charset=utf-8',
-            'SOAPAction' => sprintf('"%s"', $action),
+            'SOAPAction' => $action,
         ];
 
-        try {
-            $response = $this->client->request('POST', $location, [
-                'headers' => $headers,
-                'auth' => [$this->username, $this->password, 'ntlm'],
-                'body' => $request,
-                'http_errors' => false,
-            ]);
-        } catch (RequestException $exception) {
-            throw new SoapFault($exception->getCode(), $exception->getMessage());
-        }
+        $response = $this->client->request('POST', $location, [
+            'headers' => $headers,
+            'auth' => [$this->username, $this->password, 'ntlm'],
+            'body' => $request,
+            'http_errors' => false,
+        ]);
 
-            return (string) $response->getBody();
-        }
+        return (string)$response->getBody();
     }
+}
