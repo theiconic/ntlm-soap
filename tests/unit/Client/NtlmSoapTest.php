@@ -131,29 +131,30 @@ class NtlmSoapTest extends TestCase
 
     private function assertRequestOptionsIsEquals(string $optionsKey, $expected): void
     {
-        $this->clientMock->shouldHaveReceived('request', [
-            Mockery::any(),
-            Mockery::any(),
-            Mockery::on(function (array $options) use ($optionsKey, $expected) {
+        $this->assertRequestOptions(function (array $options) use ($optionsKey, $expected) {
 
-                $this->assertEquals($expected, $options[$optionsKey]);
+            $this->assertEquals($expected, $options[$optionsKey]);
 
-                return true;
-            }),
-        ]);
+            return true;
+        });
     }
 
     private function assertRequestOptionsContains(string $optionsKey, $expected): void
     {
+        $this->assertRequestOptions(function (array $options) use ($optionsKey, $expected) {
+
+            $this->assertContains($expected, $options[$optionsKey]);
+
+            return true;
+        });
+    }
+
+    private function assertRequestOptions(callable $assertionFn): void
+    {
         $this->clientMock->shouldHaveReceived('request', [
             Mockery::any(),
             Mockery::any(),
-            Mockery::on(function (array $options) use ($optionsKey, $expected) {
-
-                $this->assertContains($expected, $options[$optionsKey]);
-
-                return true;
-            }),
+            Mockery::on($assertionFn),
         ]);
     }
 
