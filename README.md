@@ -6,11 +6,15 @@
 ### Example
 ```php
 use TheIconic\NtlmSoap\Client\NtlmSoap;
+use GuzzleHttp\Client;
+
+$client = new Client();
 
 $soapClient = new NtlmSoap(
+    $client,
     'username',
     'password',
-    'http://your-wsdl-url'
+    'path-of-your-local-wsdl-file'
 );
 
 $response = $soapClient->soapMethod([
