@@ -8,6 +8,7 @@ use SoapClient;
 use SoapFault;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use TheIconic\NtlmSoap\Cache\CacheInterface;
+use TheIconic\NtlmSoap\Exception\InvalidCacheAdapterException;
 
 class NtlmSoap extends SoapClient
 {
@@ -76,15 +77,15 @@ class NtlmSoap extends SoapClient
             return $wsdl;
         }
 
-        if ($this->cache instanceof CacheInterface) {
-            return $this->getWsdlCachedFile($wsdl);
-        }
-
-        return null;
+        return $this->getWsdlCachedFile($wsdl);
     }
 
     private function getWsdlCachedFile(string $url): string
     {
+        if (!$this->cache instanceof CacheInterface) {
+            throw new InvalidCacheAdapterException();
+        }
+
         $fileName = sprintf('wsdl_%s.xml', md5($url));
         $wsdl = $this->cache->get($fileName);
 
