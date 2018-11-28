@@ -12,25 +12,21 @@ use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
 use SoapFault;
 use stdClass;
+use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 use TheIconic\NtlmSoap\Client\NtlmSoap;
 
 class NtlmSoapTest extends TestCase
 {
     private const INTERNAL_ERROR = 500;
-
     private const OK = 200;
 
     /** @var MockInterface */
     private $clientMock;
 
     private $soapClient;
-
     private $username = 'testUser';
-
     private $password = 'testPassword';
-
     private $testUri = 'http://test-uri';
-
     private $testLocation = 'http://test-location';
 
     protected function setUp()
@@ -43,11 +39,21 @@ class NtlmSoapTest extends TestCase
 
         $this->soapClient = new NtlmSoap(
             $this->clientMock,
-            $this->username,
-            $this->password,
-            null,
-            ['location' => $this->testLocation, 'uri' => $this->testUri]
+            [
+                'username' => $this->username,
+                'password' => $this->password,
+                'soap_options' => ['location' => $this->testLocation, 'uri' => $this->testUri],
+            ]
         );
+    }
+
+    public function testExceptionIsThrownInCaseRequiredParametersAreMissing(): void
+    {
+        $client = $this->getMockHttpClient();
+
+        $this->expectException(MissingOptionsException::class);
+
+        $soapClient = new NtlmSoap($client);
     }
 
     public function testShouldSendNtmlAuthCredentials(): void
@@ -118,10 +124,11 @@ class NtlmSoapTest extends TestCase
 
         $soapClient = new NtlmSoap(
             $client,
-            $this->username,
-            $this->password,
-            null,
-            ['location' => $this->testLocation, 'uri' => $this->testUri]
+            [
+                'username' => $this->username,
+                'password' => $this->password,
+                'soap_options' => ['location' => $this->testLocation, 'uri' => $this->testUri],
+            ]
         );
 
         $this->expectException(SoapFault::class);
