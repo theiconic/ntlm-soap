@@ -7,21 +7,26 @@ use GuzzleHttp\Exception\GuzzleException;
 use SoapClient;
 use SoapFault;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use TheIconic\NtlmSoap\Cache\CacheInterface;
 
 class NtlmSoap extends SoapClient
 {
     protected $client;
+    protected $cache;
     protected $options;
 
-    public function __construct(ClientInterface $client, array $options = [])
+    public function __construct(ClientInterface $client, CacheInterface $cache = null, array $options = [])
     {
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
 
         $this->client = $client;
+        $this->cache = $cache;
         $this->options = $resolver->resolve($options);
 
-        parent::__construct($this->options['wsdl'], $this->options['soap_options']);
+        $wsdl = $this->resolveWsdl($this->options['wsdl']);
+
+        parent::__construct($wsdl, $this->options['soap_options']);
     }
 
     /**
@@ -61,5 +66,40 @@ class NtlmSoap extends SoapClient
             'wsdl' => null,
             'soap_options' => [],
         ]);
+    }
+
+    private function resolveWsdl(?string $wsdl): ?string
+    {
+        $isRemoteWsdl = preg_match('/^https?:\/\//', $wsdl);
+
+        if (!$isRemoteWsdl) {
+            return $wsdl;
+        }
+
+        if ($this->cache instanceof CacheInterface) {
+            return $this->getWsdlCachedFile($wsdl);
+        }
+
+        return null;
+    }
+
+    private function getWsdlCachedFile(string $url): string
+    {
+        $fileName = sprintf('wsdl_%s.xml', md5($url));
+        $wsdl = $this->cache->get($fileName);
+
+        if ($wsdl === null) {
+            $contents = $this->client->request('GET', $url, [
+                'auth' => [
+                    $this->options['username'],
+                    $this->options['password'],
+                    'ntlm'
+                ],
+            ])->getBody()->getContents();
+
+            $wsdl = $this->cache->put($fileName, $contents);
+        }
+
+        return $wsdl;
     }
 }

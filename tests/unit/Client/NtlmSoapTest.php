@@ -1,6 +1,6 @@
 <?php
 
-namespace Test\Unit\TheIconic\Client;
+namespace Test\Unit\TheIconic\NtlmSoap\Client;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
@@ -39,6 +39,7 @@ class NtlmSoapTest extends TestCase
 
         $this->soapClient = new NtlmSoap(
             $this->clientMock,
+            null,
             [
                 'username' => $this->username,
                 'password' => $this->password,
@@ -124,6 +125,7 @@ class NtlmSoapTest extends TestCase
 
         $soapClient = new NtlmSoap(
             $client,
+            null,
             [
                 'username' => $this->username,
                 'password' => $this->password,

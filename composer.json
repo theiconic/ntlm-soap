@@ -26,7 +26,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Test\\Unit\\TheIconic\\": "tests/unit"
+            "Test\\Unit\\TheIconic\\NtlmSoap\\": "tests/unit"
         }
     },
     "config": {
