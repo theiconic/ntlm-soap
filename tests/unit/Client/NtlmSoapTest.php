@@ -13,7 +13,9 @@ use PHPUnit\Framework\TestCase;
 use SoapFault;
 use stdClass;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
+use TheIconic\NtlmSoap\Cache\CacheInterface;
 use TheIconic\NtlmSoap\Client\NtlmSoap;
+use TheIconic\NtlmSoap\Exception\InvalidCacheAdapterException;
 
 class NtlmSoapTest extends TestCase
 {
@@ -138,6 +140,40 @@ class NtlmSoapTest extends TestCase
         $soapClient->testRequest('foo');
     }
 
+    public function testRemoteWsdlIsFetchedAndCached(): void
+    {
+        $cache = $this->createMock(CacheInterface::class);
+        $client = $this->getMockHttpClient([
+            new Response(self::OK, [], ''),
+        ]);
+
+        $cache->expects($this->any())->method('get')->willReturn(null);
+        $cache->expects($this->once())->method('put')->willReturn($this->getTemporarySampleWsdlFile());
+
+        new NtlmSoap($client, $cache, ['username' => '', 'password' => '', 'wsdl' => $this->testLocation]);
+    }
+
+    public function testExceptionIsThrownIfCacheAdapterIsNotPresentWhenRequestingForRemoteWsdl(): void
+    {
+        $client = $this->getMockHttpClient();
+
+        $this->expectException(InvalidCacheAdapterException::class);
+
+        new NtlmSoap($client, null, ['username' => '', 'password' => '', 'wsdl' => $this->testLocation]);
+    }
+
+    public function testRemoteWsdlIsNotRequestedIfCachedVersionExists(): void
+    {
+        $client = $this->createMock(ClientInterface::class);
+        $cache = $this->createMock(CacheInterface::class);
+
+        $cache->expects($this->any())->method('get')->willReturn($this->getTemporarySampleWsdlFile());
+        $client->expects($this->never())->method('request');
+        $cache->expects($this->never())->method('put');
+
+        new NtlmSoap($client, $cache, ['username' => '', 'password' => '', 'wsdl' => $this->testLocation]);
+    }
+
     private function assertRequestOptionsIsEquals(string $optionsKey, $expected): void
     {
         $this->assertRequestOptions(function (array $options) use ($optionsKey, $expected) {
@@ -191,5 +227,10 @@ class NtlmSoapTest extends TestCase
             '</Soap:Body></Soap:Envelope>';
 
         return sprintf($responsePattern, $responseResult);
+    }
+
+    private function getTemporarySampleWsdlFile(): string
+    {
+        return __DIR__.'/../../data/sample.wsdl';
     }
 }
