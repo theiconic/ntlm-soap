@@ -31,7 +31,7 @@ class NtlmSoapTest extends TestCase
     private $testUri = 'http://test-uri';
     private $testLocation = 'http://test-location';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -56,7 +56,7 @@ class NtlmSoapTest extends TestCase
 
         $this->expectException(MissingOptionsException::class);
 
-        $soapClient = new NtlmSoap($client);
+        new NtlmSoap($client);
     }
 
     public function testShouldSendNtmlAuthCredentials(): void
@@ -188,7 +188,7 @@ class NtlmSoapTest extends TestCase
     {
         $this->assertRequestOptions(function (array $options) use ($optionsKey, $expected) {
 
-            $this->assertContains($expected, $options[$optionsKey]);
+            $this->assertStringContainsString($expected, $options[$optionsKey]);
 
             return true;
         });
