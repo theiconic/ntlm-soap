@@ -8,34 +8,34 @@ use TheIconic\NtlmSoap\Cache\FilesystemCache;
 
 class FilesystemCacheTest extends TestCase
 {
-    public function testGetItem()
+    public function testGetItem(): void
     {
         $filesystem = $this->createMock(Filesystem::class);
-        $filesystem->expects($this->any())->method('exists')->willReturn(true);
+        $filesystem->method('exists')->willReturn(true);
 
         $cache = new FilesystemCache($filesystem, '');
         $this->assertStringEndsWith('foo', $cache->get('foo'));
     }
 
-    public function testGetInexistentItem()
+    public function testGetInexistentItem(): void
     {
         $filesystem = $this->createMock(Filesystem::class);
-        $filesystem->expects($this->any())->method('exists')->willReturn(false);
+        $filesystem->method('exists')->willReturn(false);
 
         $cache = new FilesystemCache($filesystem, '');
         $this->assertNull($cache->get('foo'));
     }
 
-    public function testGetExpiredItem()
+    public function testGetExpiredItem(): void
     {
         $filesystem = $this->createMock(Filesystem::class);
-        $filesystem->expects($this->any())->method('exists')->willReturn(true);
+        $filesystem->method('exists')->willReturn(true);
 
         $cache = new FilesystemCache($filesystem, __DIR__, -1);
         $this->assertNull($cache->get(''));
     }
 
-    public function testHasItem()
+    public function testHasItem(): void
     {
         $filesystem = $this->createMock(Filesystem::class);
 
@@ -45,7 +45,7 @@ class FilesystemCacheTest extends TestCase
         $this->assertTrue($cache->has('foo'));
     }
 
-    public function testPutItem()
+    public function testPutItem(): void
     {
         $filesystem = $this->createMock(Filesystem::class);
 
