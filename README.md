@@ -1,5 +1,12 @@
 ## NTLM-SOAP
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/e2e36961babc1aa531f0/maintainability)](https://codeclimate.com/github/theiconic/ntlm-soap/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/e2e36961babc1aa531f0/test_coverage)](https://codeclimate.com/github/theiconic/ntlm-soap/test_coverage)
+[![Build Status](https://travis-ci.org/theiconic/ntlm-soap.svg?branch=master&t=202003171723)](https://travis-ci.org/theiconic/ntlm-soap)
+[![Latest Stable Version](https://poser.pugx.org/theiconic/ntlm-parser/v/stable?t=202003171723)](https://packagist.org/packages/theiconic/ntlm-parser)
+[![Total Downloads](https://poser.pugx.org/theiconic/ntlm-parser/downloads?t=202003171723)](https://packagist.org/packages/theiconic/ntlm-parser)
+[![License](https://poser.pugx.org/theiconic/ntlm-parser/license?t=202003171723)](https://packagist.org/packages/theiconic/ntlm-parser)
+
  - The purpose of this thin PHP library is to provide an easy and handy way to communicate with SOAP services that are using [NTLM](https://docs.microsoft.com/en-us/windows/desktop/secauthn/microsoft-ntlm) authentication protocol.
  
 ### Example
