@@ -1,1 +1,12 @@
-<definitions></definitions>
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:portType name="test_port_type"></wsdl:portType>
+    <wsdl:binding name="test_binding" type="test_port_type">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    </wsdl:binding>
+    <wsdl:service name="test_service">
+        <wsdl:port name="test_port" binding="tns:test_binding">
+            <soap:address location="http://localhost"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
