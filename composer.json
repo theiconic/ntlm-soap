@@ -1,6 +1,8 @@
 {
     "name": "theiconic/ntlm-soap",
+    "description": "PHP Library for consuming SOAP web services using NTLM authentication",
     "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "THE ICONIC Engineering Team",
