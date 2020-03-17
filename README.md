@@ -7,7 +7,7 @@
 [![Total Downloads](https://poser.pugx.org/theiconic/ntlm-soap/downloads?t=202003171723)](https://packagist.org/packages/theiconic/ntlm-soap)
 [![License](https://poser.pugx.org/theiconic/ntlm-soap/license?t=202003171723)](https://packagist.org/packages/theiconic/ntlm-soap)
 
- - The purpose of this thin PHP library is to provide an easy and handy way to communicate with SOAP services that are using [NTLM](https://docs.microsoft.com/en-us/windows/desktop/secauthn/microsoft-ntlm) authentication protocol.
+The purpose of this thin PHP library is to provide an easy and handy way to communicate with SOAP services that are using [NTLM](https://docs.microsoft.com/en-us/windows/desktop/secauthn/microsoft-ntlm) authentication protocol.
  
 ### Example
 
@@ -40,7 +40,7 @@ $response = $soapClient->soapMethod([
 ]);
 ```
 
-In order to use a remote WSDL definition, you need a fileystem cache adapter. Example:
+In order to use a remote WSDL definition, you need a fileystem cache adapter. The client will fetch the WSDL once and store it on your filesystem. Example:
 
 ```php
 <?php
