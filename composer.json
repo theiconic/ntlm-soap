@@ -10,9 +10,9 @@
         }
     ],
     "require": {
-        "php": "^7.2",
+        "php": "^8.0",
         "ext-soap": "*",
-        "guzzlehttp/guzzle": "^6.3",
+        "guzzlehttp/guzzle": "6.5.8",
         "symfony/options-resolver": "^4.1|^5.0",
         "symfony/filesystem": "^4.1|^5.0"
     },
