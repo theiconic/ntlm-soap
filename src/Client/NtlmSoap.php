@@ -12,6 +12,7 @@ use TheIconic\NtlmSoap\Exception\InvalidCacheAdapterException;
 
 class NtlmSoap extends SoapClient
 {
+    protected const DEFAULT_TIMEOUT = 60;
     protected $client;
     protected $cache;
     protected $options;
@@ -51,6 +52,7 @@ class NtlmSoap extends SoapClient
             ],
             'body' => $request,
             'http_errors' => false,
+            'timeout' => $this->options['timeout'] ?? self::DEFAULT_TIMEOUT,
         ]);
 
         return (string) $response->getBody();
