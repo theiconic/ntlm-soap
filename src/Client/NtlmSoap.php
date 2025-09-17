@@ -52,7 +52,7 @@ class NtlmSoap extends SoapClient
             ],
             'body' => $request,
             'http_errors' => false,
-            'timeout' => $this->options['timeout'] ?? self::DEFAULT_TIMEOUT,
+            'timeout' => $this->options['timeout'],
         ]);
 
         return (string) $response->getBody();
@@ -68,6 +68,7 @@ class NtlmSoap extends SoapClient
         $resolver->setDefaults([
             'wsdl' => null,
             'soap_options' => [],
+            'timeout' => self::DEFAULT_TIMEOUT,
         ]);
     }
 
