@@ -12,6 +12,7 @@
     "require": {
         "php": "^8.0",
         "ext-soap": "*",
+        "ext-curl": "*",
         "guzzlehttp/guzzle": "^7.15.2",
         "symfony/options-resolver": "^4.1|^5.0",
         "symfony/filesystem": "^4.1|^5.0"
