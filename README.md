@@ -9,6 +9,11 @@
 
 The purpose of this thin PHP library is to provide an easy and handy way to communicate with SOAP services that are using [NTLM](https://docs.microsoft.com/en-us/windows/desktop/secauthn/microsoft-ntlm) authentication protocol.
  
+### Requirements
+
+NTLM is negotiated by cURL, so the Guzzle client must use the cURL handler and PHP's libcurl must be built with NTLM
+support (`curl_version()['features'] & CURL_VERSION_NTLM`). Recent libcurl builds can ship without it.
+
 ### Example
 
 Using a local WSDL file:

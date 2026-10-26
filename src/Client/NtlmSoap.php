@@ -45,17 +45,21 @@ class NtlmSoap extends SoapClient
 
         $response = $this->client->request('POST', $location, [
             'headers' => $headers,
-            'auth' => [
-                $this->options['username'],
-                $this->options['password'],
-                'ntlm'
-            ],
+            'curl' => $this->ntlmCurlOptions(),
             'body' => $request,
             'http_errors' => false,
             'timeout' => $this->options['timeout'],
         ]);
 
         return (string) $response->getBody();
+    }
+
+    private function ntlmCurlOptions(): array
+    {
+        return [
+            CURLOPT_HTTPAUTH => CURLAUTH_NTLM,
+            CURLOPT_USERPWD => sprintf('%s:%s', $this->options['username'], $this->options['password']),
+        ];
     }
 
     private function configureOptions(OptionsResolver $resolver)
@@ -94,11 +98,7 @@ class NtlmSoap extends SoapClient
 
         if ($wsdl === null) {
             $contents = $this->client->request('GET', $url, [
-                'auth' => [
-                    $this->options['username'],
-                    $this->options['password'],
-                    'ntlm'
-                ],
+                'curl' => $this->ntlmCurlOptions(),
             ])->getBody()->getContents();
 
             $wsdl = $this->cache->put($fileName, $contents);

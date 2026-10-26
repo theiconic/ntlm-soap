@@ -63,13 +63,12 @@ class NtlmSoapTest extends TestCase
     {
         $this->soapClient->testRequest('foo');
 
-        $expectedAuth = [
-            $this->username,
-            $this->password,
-            'ntlm',
+        $expectedCurlOptions = [
+            CURLOPT_HTTPAUTH => CURLAUTH_NTLM,
+            CURLOPT_USERPWD => $this->username.':'.$this->password,
         ];
 
-        $this->assertRequestOptionsIsEquals('auth', $expectedAuth);
+        $this->assertRequestOptionsIsEquals('curl', $expectedCurlOptions);
     }
 
     public function testShouldSendHeadersOnRequest(): void
